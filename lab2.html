@@ -1,0 +1,611 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+    <title>Practical 2 code explanation</title>
+
+    <link rel="stylesheet" href="./revealjs/css/reset.css">
+    <link rel="stylesheet" href="./revealjs/css/reveal.css">
+    <link rel="stylesheet" href="./revealjs/css/theme/richard.css">
+
+    <!-- Theme used for syntax highlighting of code -->
+    <link rel="stylesheet" href="./revealjs/lib/css/monokai.css">
+
+    <!-- Printing and PDF exports -->
+    <script>
+      var link = document.createElement( 'link' );
+      link.rel = 'stylesheet';
+      link.type = 'text/css';
+      link.href = window.location.search.match( /print-pdf/gi ) ? './revealjs/css/print/pdf.css' : './revealjs/css/print/paper.css';
+      document.getElementsByTagName( 'head' )[0].appendChild( link );
+    </script>
+
+    <style>
+      .reveal pre code { max-height: 600px; }
+      kbd { background-color: #777; padding: 0 .5ex; border-radius: .5ex }
+			.reveal p > code,
+			.reveal h2 > code,
+			.reveal li > code
+      { background-color: #777; padding: .5ex; border-radius: .5ex; font-size: 70%; position: relative; top: -.15em }
+      .multi-col { display: table; table-layout: fixed; width: 100%; text-align: left; }
+      .multi-col > .col { display: table-cell; vertical-align: top; width: 50%; padding: 2% 0 2% 3%; }
+      .multi-col > .col:first-of-type { padding-left: 0; }
+    </style>
+  </head>
+  <body>
+    <div class="reveal">
+      <div class="slides">
+
+<section data-markdown>
+<textarea data-template>
+# Practical 2
+</textarea>
+</section>
+
+<section>
+<pre><code class="language-python" data-line-numbers="1,8,11,14,17"
+>class Node:
+  def __init__(self, state=None, parent=None):
+    ...
+
+  def addChildren(self, children):
+    ...
+
+def expandAndReturnChildren(state_space, node):
+  ...
+
+def bfs(state_space, initial_state, goal_state):
+  ...
+
+def getCost(state_space, state0, state1):
+  ...
+
+if __name__ == "__main__":
+  ...
+</code></pre>          
+</section>
+
+<section>
+<p>State space definition</p>
+<pre class="stretch"><code class="language-python" data-line-numbers="3-27"
+>if __name__ == "__main__":
+  # state space and step cost definition
+  state_space = [
+    ["Arad", "Zerind", 75],
+    ["Zerind", "Oradea", 71],
+    ["Oradea", "Sibiu", 151],
+    ["Sibiu", "Arad", 140],
+    ["Sibiu", "Fagaras", 99],
+    ["Sibiu", "Rimnicu Vilcea", 80],
+    ["Fagaras", "Bucharest", 211],
+    ["Bucharest", "Giurgiu", 90],
+    ["Bucharest", "Pitesti", 101],
+    ["Pitesti", "Rimnicu Vilcea", 97],
+    ["Rimnicu Vilcea", "Craiova", 146],
+    ["Craiova", "Pitesti", 138],
+    ["Craiova", "Drobeta", 120],
+    ["Drobeta", "Mehadia", 75],
+    ["Mehadia", "Lugoj", 70],
+    ["Lugoj", "Timisoara", 111],
+    ["Arad", "Timisoara", 118],
+    ["Bucharest", "Urziceni", 85],
+    ["Urziceni", "Vaslui", 142],
+    ["Vaslui", "Iasi", 92],
+    ["Iasi", "Neamt", 87],
+    ["Urziceni", "Hirsova", 98],
+    ["Hirsova", "Eforie", 86]
+  ]
+
+  initial_state = "Arad"
+  goal_state = "Bucharest"
+
+  [solution, cost] = bfs(state_space, initial_state, goal_state)
+  
+  print("Solution:", solution)
+  print("Path Cost:", cost)
+</code></pre>
+</section>
+
+<section>
+<p>Definition of initial and goal states</p>
+<pre class="stretch"><code class="language-python" data-line-numbers="7-8"
+>if __name__ == "__main__":
+  # state space and step cost definition
+  state_space = [
+    ...
+  ]
+
+  initial_state = "Arad"
+  goal_state = "Bucharest"
+
+  [solution, cost] = bfs(state_space, initial_state, goal_state)
+  
+  print("Solution:", solution)
+  print("Path Cost:", cost)
+</code></pre>
+</section>
+
+<section>
+<p>Execution of BFS algorithm</p>
+<pre class="stretch"><code class="language-python" data-line-numbers="10"
+>if __name__ == "__main__":
+  # state space and step cost definition
+  state_space = [
+    ...
+  ]
+
+  initial_state = "Arad"
+  goal_state = "Bucharest"
+
+  [solution, cost] = bfs(state_space, initial_state, goal_state)
+  
+  print("Solution:", solution)
+  print("Path Cost:", cost)
+</code></pre>
+</section>
+
+<section>
+<p>Display of solution</p>
+<pre class="stretch"><code class="language-python" data-line-numbers="12-13"
+>if __name__ == "__main__":
+  # state space and step cost definition
+  state_space = [
+    ...
+  ]
+
+  initial_state = "Arad"
+  goal_state = "Bucharest"
+
+  [solution, cost] = bfs(state_space, initial_state, goal_state)
+  
+  print("Solution:", solution)
+  print("Path Cost:", cost)
+</code></pre>
+</section>
+
+<section>
+<p>We design the <code>bfs</code> function to takes <code>state_space</code>, <code>initial_state</code>, and <code>goal_state</code> as inputs.</p>
+<pre class="stretch"><code class="language-python" data-line-numbers="1"
+>def bfs(state_space, initial_state, goal_state):
+  frontier = []
+  explored = []
+  found_goal = False
+  goalie = Node()
+  solution = []
+  # add initial state to frontier
+  frontier.append(Node(initial_state, None))
+
+  while not found_goal:
+    # expand the first in the frontier
+    children = expandAndReturnChildren(state_space, frontier[0])
+    # add children list to the expanded node
+    frontier[0].addChildren(children)
+    # add to the explored list
+    explored.append(frontier[0])
+    # remove the expanded frontier
+    del frontier[0]
+    # add children to the frontier
+    for child in children:
+      # check if a node was expanded or generated previously
+      if not (child.state in [e.state for e in explored]) and not (child.state in [f.state for f in frontier]):
+        # goal test
+        if child.state == goal_state:
+          found_goal = True
+          goalie = child
+        frontier.append(child)
+    print("Explored:", [e.state for e in explored])
+    print("Frontier:", [f.state for f in frontier])
+    print("Children:", [c.state for c in children])
+    print("")
+
+  solution = [goalie.state]
+  path_cost = 0
+  while goalie.parent is not None:
+    solution.insert(0, goalie.parent)
+    for e in explored:
+      if e.state == goalie.parent:
+        path_cost += getCost(state_space, e.state, goalie.state)
+        goalie = e
+        break
+  return solution, path_cost
+</code></pre>
+</section>
+  
+<section>
+<p>We will maintain 2 lists, <code>frontier</code> and <code>explored</code> so we will always expand from the top/beginning of <code>frontier</code> and check <code>explored</code> for redundant path</p>
+<pre class="stretch"><code class="language-python" data-line-numbers="2-3"
+>def bfs(state_space, initial_state, goal_state):
+  frontier = []
+  explored = []
+  found_goal = False
+  goalie = Node()
+  solution = []
+  # add initial state to frontier
+  frontier.append(Node(initial_state, None))
+
+  while not found_goal:
+    # expand the first in the frontier
+    children = expandAndReturnChildren(state_space, frontier[0])
+    # add children list to the expanded node
+    frontier[0].addChildren(children)
+    # add to the explored list
+    explored.append(frontier[0])
+    # remove the expanded frontier
+    del frontier[0]
+    # add children to the frontier
+    for child in children:
+      # check if a node was expanded or generated previously
+      if not (child.state in [e.state for e in explored]) and not (child.state in [f.state for f in frontier]):
+        # goal test
+        if child.state == goal_state:
+          found_goal = True
+          goalie = child
+        frontier.append(child)
+    print("Explored:", [e.state for e in explored])
+    print("Frontier:", [f.state for f in frontier])
+    print("Children:", [c.state for c in children])
+    print("")
+
+  solution = [goalie.state]
+  path_cost = 0
+  while goalie.parent is not None:
+    solution.insert(0, goalie.parent)
+    for e in explored:
+      if e.state == goalie.parent:
+        path_cost += getCost(state_space, e.state, goalie.state)
+        goalie = e
+        break
+  return solution, path_cost
+</code></pre>
+</section>
+
+<section>
+<p>We use <code>found_goal</code> as a flag to identify if the goal state is reached and if we should continue searching</p>
+<pre class="stretch"><code class="language-python" data-line-numbers="4,10"
+>def bfs(state_space, initial_state, goal_state):
+  frontier = []
+  explored = []
+  found_goal = False
+  goalie = Node()
+  solution = []
+  # add initial state to frontier
+  frontier.append(Node(initial_state, None))
+
+  while not found_goal:
+    # expand the first in the frontier
+    children = expandAndReturnChildren(state_space, frontier[0])
+    # add children list to the expanded node
+    frontier[0].addChildren(children)
+    # add to the explored list
+    explored.append(frontier[0])
+    # remove the expanded frontier
+    del frontier[0]
+    # add children to the frontier
+    for child in children:
+      # check if a node was expanded or generated previously
+      if not (child.state in [e.state for e in explored]) and not (child.state in [f.state for f in frontier]):
+        # goal test
+        if child.state == goal_state:
+          found_goal = True
+          goalie = child
+        frontier.append(child)
+    print("Explored:", [e.state for e in explored])
+    print("Frontier:", [f.state for f in frontier])
+    print("Children:", [c.state for c in children])
+    print("")
+
+  solution = [goalie.state]
+  path_cost = 0
+  while goalie.parent is not None:
+    solution.insert(0, goalie.parent)
+    for e in explored:
+      if e.state == goalie.parent:
+        path_cost += getCost(state_space, e.state, goalie.state)
+        goalie = e
+        break
+  return solution, path_cost
+</code></pre>
+</section>
+
+<section>
+<p><code>goalie</code> and <code>solution</code> are initialised for later use after the goal is found</p>
+<pre class="stretch"><code class="language-python" data-line-numbers="5,6"
+>def bfs(state_space, initial_state, goal_state):
+  frontier = []
+  explored = []
+  found_goal = False
+  goalie = Node()
+  solution = []
+  # add initial state to frontier
+  frontier.append(Node(initial_state, None))
+
+  while not found_goal:
+    # expand the first in the frontier
+    children = expandAndReturnChildren(state_space, frontier[0])
+    # add children list to the expanded node
+    frontier[0].addChildren(children)
+    # add to the explored list
+    explored.append(frontier[0])
+    # remove the expanded frontier
+    del frontier[0]
+    # add children to the frontier
+    for child in children:
+      # check if a node was expanded or generated previously
+      if not (child.state in [e.state for e in explored]) and not (child.state in [f.state for f in frontier]):
+        # goal test
+        if child.state == goal_state:
+          found_goal = True
+          goalie = child
+        frontier.append(child)
+    print("Explored:", [e.state for e in explored])
+    print("Frontier:", [f.state for f in frontier])
+    print("Children:", [c.state for c in children])
+    print("")
+
+  solution = [goalie.state]
+  path_cost = 0
+  while goalie.parent is not None:
+    solution.insert(0, goalie.parent)
+    for e in explored:
+      if e.state == goalie.parent:
+        path_cost += getCost(state_space, e.state, goalie.state)
+        goalie = e
+        break
+  return solution, path_cost
+</code></pre>
+</section>
+
+<section>
+<p>We start by adding the initial state to the frontier</p>
+<pre class="stretch"><code class="language-python" data-line-numbers="8"
+>def bfs(state_space, initial_state, goal_state):
+  frontier = []
+  explored = []
+  found_goal = False
+  goalie = Node()
+  solution = []
+  # add initial state to frontier
+  frontier.append(Node(initial_state, None))
+
+  while not found_goal:
+    # expand the first in the frontier
+    children = expandAndReturnChildren(state_space, frontier[0])
+    # add children list to the expanded node
+    frontier[0].addChildren(children)
+    # add to the explored list
+    explored.append(frontier[0])
+    # remove the expanded frontier
+    del frontier[0]
+    # add children to the frontier
+    for child in children:
+      # check if a node was expanded or generated previously
+      if not (child.state in [e.state for e in explored]) and not (child.state in [f.state for f in frontier]):
+        # goal test
+        if child.state == goal_state:
+          found_goal = True
+          goalie = child
+        frontier.append(child)
+    print("Explored:", [e.state for e in explored])
+    print("Frontier:", [f.state for f in frontier])
+    print("Children:", [c.state for c in children])
+    print("")
+
+  solution = [goalie.state]
+  path_cost = 0
+  while goalie.parent is not None:
+    solution.insert(0, goalie.parent)
+    for e in explored:
+      if e.state == goalie.parent:
+        path_cost += getCost(state_space, e.state, goalie.state)
+        goalie = e
+        break
+  return solution, path_cost
+</code></pre>
+</section>
+
+<section>
+<p>BFS flow</p>
+<pre class="stretch"><code class="language-python" data-line-numbers="12,14,16,18,20,22,24-27"
+>def bfs(state_space, initial_state, goal_state):
+  frontier = []
+  explored = []
+  found_goal = False
+  goalie = Node()
+  solution = []
+  # add initial state to frontier
+  frontier.append(Node(initial_state, None))
+
+  while not found_goal:
+    # expand the first in the frontier
+    children = expandAndReturnChildren(state_space, frontier[0])
+    # add children list to the expanded node
+    frontier[0].addChildren(children)
+    # add to the explored list
+    explored.append(frontier[0])
+    # remove the expanded frontier
+    del frontier[0]
+    # add children to the frontier
+    for child in children:
+      # check if a node was expanded or generated previously
+      if not (child.state in [e.state for e in explored]) and not (child.state in [f.state for f in frontier]):
+        # goal test
+        if child.state == goal_state:
+          found_goal = True
+          goalie = child
+        frontier.append(child)
+    print("Explored:", [e.state for e in explored])
+    print("Frontier:", [f.state for f in frontier])
+    print("Children:", [c.state for c in children])
+    print("")
+
+  solution = [goalie.state]
+  path_cost = 0
+  while goalie.parent is not None:
+    solution.insert(0, goalie.parent)
+    for e in explored:
+      if e.state == goalie.parent:
+        path_cost += getCost(state_space, e.state, goalie.state)
+        goalie = e
+        break
+  return solution, path_cost
+</code></pre>
+</section>
+
+<section>
+<p>BFS flow</p>
+<svg viewBox="-500 -50 1200 1510" width="500" height="500">
+  <text x="0" y="0" dominant-baseline="middle" text-anchor="middle" fill="white">
+    <tspan>is goal found? [line 10]</tspan>
+    <tspan x="0" dy="160">expand first node in frontier [line 12]</tspan>
+    <tspan x="0" dy="160">save the expanded children to the parent node [line 14]</tspan>
+    <tspan x="0" dy="160">add the expanded node to explored [line 16]</tspan>
+    <tspan x="0" dy="160">remove expanded node from frontier [line 18]</tspan>
+    <tspan x="0" dy="160">for each child, [line 20]</tspan>
+    <tspan x="0" dy="160">if the child is neither in frontier nor expanded [line 22]</tspan>
+    <tspan x="0" dy="160">if child is goal [line 24]</tspan>
+    <tspan x="0" dy="160">set current child as goal [line 26]</tspan>
+    <tspan x="0" dy="160">add child of frontier and repeat [line 27]</tspan>
+  </text>
+  <path d="M 0 40 v 80 l 10 -10 l -10 3 l -10 -3 l 10 10" stroke="white" fill="white" />
+  <path d="M 0 200 v 80 l 10 -10 l -10 3 l -10 -3 l 10 10" stroke="white" fill="white" />
+  <path d="M 0 360 v 80 l 10 -10 l -10 3 l -10 -3 l 10 10" stroke="white" fill="white" />
+  <path d="M 0 520 v 80 l 10 -10 l -10 3 l -10 -3 l 10 10" stroke="white" fill="white" />
+  <path d="M 0 680 v 80 l 10 -10 l -10 3 l -10 -3 l 10 10" stroke="white" fill="white" />
+  <path d="M 0 840 v 80 l 10 -10 l -10 3 l -10 -3 l 10 10" stroke="white" fill="white" />
+  <path d="M 0 1000 v 80 l 10 -10 l -10 3 l -10 -3 l 10 10" stroke="white" fill="white" />
+  <path d="M 0 1160 v 80 l 10 -10 l -10 3 l -10 -3 l 10 10" stroke="white" fill="white" />
+  <path d="M 0 1320 v 80 l 10 -10 l -10 3 l -10 -3 l 10 10" stroke="white" fill="white" />
+  
+  <path d="M -220 0 h -200 l 10 10 l -3 -10 l 3 -10 l -10 10" stroke="white" fill="white" />
+
+  <path d="M -500 960 h -50 V 800 h 320" stroke="white" fill="none" />
+  <path d="M -230 800 l -10 -10 l 3 10 l -3 10 l 10 -10" stroke="white" fill="white" />
+
+  <path d="M -220 1120 h -210 V 1440 h 50" stroke="white" fill="none" />
+  <path d="M -380 1440 l -10 -10 l 3 10 l -3 10 l 10 -10" stroke="white" fill="white" />
+
+  <path d="M 380 1440 h 210 V 0 h -360" stroke="white" fill="none" />
+  <path d="M 230 0 l 10 -10 l -3 10 l 3 10 l -10 -10" stroke="white" fill="white" />
+
+  <text x="20" y="1035" dominant-baseline="middle" text-anchor="start" fill="green">true</text>
+  <text x="20" y="1195" dominant-baseline="middle" text-anchor="start" fill="green">true</text>
+  <text x="-315" y="-10" dominant-baseline="text-after-edge" text-anchor="middle" fill="green">true</text>
+
+  <text x="-400" y="1120" dominant-baseline="text-after-edge" text-anchor="start" fill="red">false</text>
+  <text x="-530" y="880" dominant-baseline="middle" text-anchor="start" fill="red">false</text>
+  <text x="20" y="75" dominant-baseline="middle" text-anchor="start" fill="red">false</text>
+</svg>
+</section>
+
+<section>
+<p>We identify our solution by backtracing from the goal node to the initial node and calculating path cost along the way</p>
+<pre class="stretch"><code class="language-python" data-line-numbers="33-41"
+>def bfs(state_space, initial_state, goal_state):
+  frontier = []
+  explored = []
+  found_goal = False
+  goalie = Node()
+  solution = []
+  # add initial state to frontier
+  frontier.append(Node(initial_state, None))
+
+  while not found_goal:
+    # expand the first in the frontier
+    children = expandAndReturnChildren(state_space, frontier[0])
+    # add children list to the expanded node
+    frontier[0].addChildren(children)
+    # add to the explored list
+    explored.append(frontier[0])
+    # remove the expanded frontier
+    del frontier[0]
+    # add children to the frontier
+    for child in children:
+      # check if a node was expanded or generated previously
+      if not (child.state in [e.state for e in explored]) and not (child.state in [f.state for f in frontier]):
+        # goal test
+        if child.state == goal_state:
+          found_goal = True
+          goalie = child
+        frontier.append(child)
+    print("Explored:", [e.state for e in explored])
+    print("Frontier:", [f.state for f in frontier])
+    print("Children:", [c.state for c in children])
+    print("")
+
+  solution = [goalie.state]
+  path_cost = 0
+  while goalie.parent is not None:
+    solution.insert(0, goalie.parent)
+    for e in explored:
+      if e.state == goalie.parent:
+        path_cost += getCost(state_space, e.state, goalie.state)
+        goalie = e
+        break
+  return solution, path_cost
+</code></pre>
+</section>
+
+<section>
+<p>Expand a node</p>
+<pre><code class="language-python" data-line-numbers=""
+>def expandAndReturnChildren(state_space, node):
+  children = []
+  for [m,n,c] in state_space:
+    if m == node.state:
+      children.append(Node(n, node.state))
+    elif n == node.state:
+      children.append(Node(m, node.state))
+  return children
+</code></pre>
+<p>Note that the connections between states are bidirectional </p>
+</section>
+
+<section>
+<p>Get cost from state space</p>
+<pre><code class="language-python" data-line-numbers=""
+>def getCost(state_space, state0, state1):
+  for [m,n,c] in state_space:
+    if [state0,state1] == [m,n] or [state1,state0] == [m,n]:
+      return c
+</code></pre>
+</section>
+
+<section>
+<p><code>Node</code> class to store information of a node</p>
+<pre><code class="language-python" data-line-numbers=""
+>class Node:
+  def __init__(self, state=None, parent=None):
+    self.state = state
+    self.parent = parent
+    self.children = []
+
+  def addChildren(self, children):
+    self.children.extend(children)
+</code></pre>  
+</section>
+
+      </div>
+    </div>
+
+    <script src="./revealjs/js/reveal.js"></script>
+
+    <script>
+      // More info about config & dependencies:
+      // - https://github.com/hakimel/reveal.js#configuration
+      // - https://github.com/hakimel/reveal.js#dependencies
+      Reveal.initialize({
+        hash: true,
+        transition: "fade",
+        dependencies: [
+          { src: './revealjs/plugin/markdown/marked.js' },
+          { src: './revealjs/plugin/markdown/markdown.js' },
+          { src: './revealjs/plugin/highlight/highlight.js' },
+          { src: './revealjs/plugin/notes/notes.js', async: true },
+          { src: './revealjs/plugin/zoom-js/zoom.js', async: true }
+        ]
+      });
+    </script>
+  </body>
+</html>

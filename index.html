@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+    <title>Code explanation</title>
+    <link href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/@mdi/font@4.x/css/materialdesignicons.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.min.css" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, minimal-ui">
+    <style>
+      .v-content { background-color: #CFD8DC; }
+    </style>
+  </head>
+  <body>
+    <div id="app">
+      <v-app>
+        <v-content>
+          <v-container>
+            <span class="display-1">Explanation of codes</span>
+            <v-list class="mt-2">
+              <v-list-item v-for="l,i in list" :key="`item${i}`" :href="l.link">
+                <v-list-item-content>
+                  <v-list-item-title>{{ l.name }}</v-list-item-title>
+                </v-list-item-content>
+              </v-list-item>
+            </v-list>
+          </v-container>
+        </v-content>
+      </v-app>
+    </div>
+  
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.x/dist/vue.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.js"></script>
+    <script>
+      new Vue({
+        el: '#app',
+        vuetify: new Vuetify(),
+        data: {
+          list: [
+            { name: "Lab 2", link: "lab2.html" }
+          ]
+        }
+      })
+    </script>
+  </body>
+</html>
